@@ -1,0 +1,13 @@
+def jaccard_similarity(set1, set2):
+  intersection = len(set1.intersection(set2))
+  union = len(set1.union(set2))
+  return intersection / union
+
+# Calculating Jaccard similarity between original shingles
+similarity_original = jaccard_similarity(shingles1, shingles2)
+# Calculating Jaccard similarity between minhash signatures
+similarity_signatures = jaccard_similarity(set(signature1), set(signature2))
+
+print("Jaccard similarity between original shingles:", similarity_original)
+print("Jaccard similarity between minhash signatures:",
+similarity_signatures)
