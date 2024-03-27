@@ -1,0 +1,79 @@
+mapper
+
+#!/usr/bin/env python3
+
+import sys
+from itertools import combinations
+
+# Read input
+for line in sys.stdin:
+    items = line.strip().split()
+    # Generate pairs
+    pairs = combinations(items, 2)
+    # Output pairs with count of 1
+    for pair in pairs:
+        print(f"{' '.join(pair)}\t1")
+
+
+reducer
+
+#!/usr/bin/env python3
+
+import sys
+
+confidence_threshold = 0.3
+interest_threshold = 0.03  # Adjust this threshold as needed
+
+# Initialize itemset count dictionary
+itemset_support = {}
+itemset_counts = {}
+
+# Read input and aggregate counts
+for line in sys.stdin:
+    rule, count = line.strip().split('\t')
+    itemset_counts[rule] = itemset_counts.get(rule, 0) + int(count)
+
+    # Extract individual itemsets from the rule
+    items = rule.split()
+    antecedent = frozenset([items[0]])
+    consequent = frozenset([items[1]])
+
+    # Update support counts for individual itemsets
+    itemset_support[antecedent] = itemset_support.get(antecedent, 0) +
+int(count)
+    itemset_support[consequent] = itemset_support.get(consequent, 0) +
+int(count)
+    # Update support counts for the union of antecedent and consequent
+    union_support = itemset_support.get(antecedent.union(consequent), 0)
+    itemset_support[antecedent.union(consequent)] = union_support +
+int(count)
+
+
+
+# Compute and output confidence and interest scores
+for rule, count in itemset_counts.items():
+    antecedent, consequent = rule.split()
+    antecedent = frozenset([antecedent])
+    consequent = frozenset([consequent])
+
+    # Compute confidence score
+    confidence = count / itemset_support[antecedent]
+
+    # Compute interest score
+    if itemset_support[antecedent] != 0 and itemset_support[consequent] !=
+0:
+        interest = itemset_support[antecedent.union(consequent)] /
+(itemset_support[antecedent] * itemset_support[consequent])
+    else:
+        interest = 0
+
+
+
+    # Check if confidence and interest scores meet their respective
+thresholds
+    if confidence >= confidence_threshold and interest >=
+interest_threshold:
+        # Output the rule, its confidence score, and its interest score
+        print(f"Rule: {rule}, Confidence: {confidence}, Interest:
+{interest}")
+
