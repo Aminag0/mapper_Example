@@ -1,0 +1,15 @@
+# Function to generate shingles
+def generate_shingles(sentence, k=8):
+    shingles = set()
+    words = sentence.split()
+
+    for i in range(len(words) - k + 1):
+        shingles.add(' '.join(words[i:i+k]))
+
+    return shingles
+
+# Generating shingles for the example sentences
+shingles1 = generate_shingles(f1)
+shingles2 = generate_shingles(f2)
+shingles3 = generate_shingles(f3)
+
