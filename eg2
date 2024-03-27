@@ -1,0 +1,64 @@
+Mapper
+#!/usr/bin/env python3
+
+import sys
+import itertools
+
+# Initialize item count dictionary
+itemset_counts = {}
+# Read input and count occurrences of each itemset
+for line in sys.stdin:
+    itemset, count = line.strip().split('\t')
+    itemset_counts[itemset] = int(count)
+
+# Output all possible subsets of each itemset
+for itemset, count in itemset_counts.items():
+    items = itemset.split()
+    for i in range(1, len(items)):
+        for subset in itertools.combinations(items, i):
+            remaining_items = set(items) - set(subset)
+            remaining_items_str = ' '.join(sorted(list(remaining_items)))
+            print(f"{', '.join(sorted(list(subset)))} =>
+{remaining_items_str}\t{count}")
+
+
+reducer
+
+#!/usr/bin/env python3
+
+import sys
+
+threshold=0.5
+# Initialize itemset count dictionary
+itemset_support = {}
+itemset_counts = {}
+
+# Read input and aggregate counts
+for line in sys.stdin:
+    rule, count = line.strip().split('\t')
+    itemset_counts[rule] = itemset_counts.get(rule, 0) + int(count)
+
+
+# Extract individual itemsets from the rule
+    antecedent, consequent = rule.split('=>')
+    antecedent = frozenset(antecedent.split(','))
+    consequent = frozenset(consequent.split(','))
+
+    # Update support counts for individual itemsets
+    itemset_support[antecedent] = itemset_support.get(antecedent, 0) +
+int(count)
+    itemset_support[consequent] = itemset_support.get(consequent, 0) +
+int(count)
+
+# Compute and output confidence scores
+for rule, count in itemset_counts.items():
+    antecedent, consequent = rule.split('=>')
+    antecedent = frozenset(antecedent.split(','))
+    consequent = frozenset(consequent.split(','))
+
+    # Compute confidence score
+    confidence = count / itemset_support[antecedent]
+
+    if confidence>=threshold:
+         # Output the rule and its confidence score
+         print(f"Rule: {rule}, Confidence: {confidence}")
