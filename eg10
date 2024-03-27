@@ -1,0 +1,108 @@
+mapper #!/usr/bin/env python3
+
+
+
+import sys
+
+
+
+# Initialize sentence counter
+
+sentence_number = 0
+
+
+
+# Read input from standard input
+
+for line in sys.stdin:
+
+    # Increment sentence counter
+
+    sentence_number += 1
+
+    # Remove leading and trailing whitespace
+
+    line = line.strip()
+
+    # Split the line into words
+
+    words = line.split()
+
+    # Emit each word with a count of 1 and the sentence number
+
+    for word in words:
+
+        # Convert word to lowercase
+
+        word = word.lower()
+
+        print(f"{word}\t1\t{sentence_number}")
+reducer#!/usr/bin/env python3
+
+
+
+import sys
+
+
+
+# Initialize variables
+
+current_word = None
+
+current_count = 0
+
+sentence_numbers = []
+
+
+
+# Read input from standard input
+
+for line in sys.stdin:
+
+    # Remove leading and trailing whitespace
+
+    line = line.strip()
+
+    # Split the line into word, count, and sentence number
+
+    word, count, sentence_number = line.split("\t", 2)
+
+    # Convert count and sentence number to integers
+
+    count = int(count)
+
+    sentence_number = int(sentence_number)
+
+    # Check if the word is the same as the current word
+
+    if word == current_word:
+
+        current_count += count
+
+        # Add sentence number to the list
+
+        sentence_numbers.append(sentence_number)
+
+    else:
+
+        # If the word is different, print the previous word's count and sentence numbers if it appears more than once
+
+        if current_word and current_count > 1:
+
+            print(f"{current_word}\t{current_count}\t{' '.join(map(str, sentence_numbers))}")
+
+        # Update current word, count, and sentence numbers
+
+        current_word = word
+
+        current_count = count
+
+        sentence_numbers = [sentence_number]
+
+
+
+# Print the last word's count and sentence numbers if it appears more than once
+
+if current_word and current_count > 1:
+
+    print(f"{current_word}\t{current_count}\t{' '.join(map(str, sentence_numbers))}")
