@@ -1,0 +1,35 @@
+vocabulary = sorted(set.union(shingles1, shingles2, shingles3))
+
+# One-hot coding
+def one_hot_encoding(shingles, vocabulary):
+    encoding = [1 if shingle in shingles else 0 for shingle in vocabulary]
+    return encoding
+
+# Generating one-hot encoding for the example sentences
+encoding1 = one_hot_encoding(shingles1, vocabulary)
+encoding2 = one_hot_encoding(shingles2, vocabulary)
+encoding3 = one_hot_encoding(shingles3, vocabulary)
+
+num_permutations = 8
+max_shingle_id = len(vocabulary)
+next_prime = 4294967311
+
+# Random coefficients for hashing
+coefficients = random.sample(range(1, max_shingle_id + 1), num_permutations)
+def minhash_signature(encoding, coefficients):
+    signature = []
+    for coeff in coefficients:
+        min_hash = float('inf')
+        for index, value in enumerate(encoding):
+            if value == 1:
+                hash_code = (coeff * (index + 1)) % next_prime
+                if hash_code < min_hash:
+                    min_hash = hash_code
+        signature.append(min_hash)
+    return signature
+
+# Generating minhash signatures for the example sentences
+signature1 = minhash_signature(encoding1, coefficients)
+signature2 = minhash_signature(encoding2, coefficients)
+signature3 = minhash_signature(encoding3, coefficients)
+
