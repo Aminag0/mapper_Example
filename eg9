@@ -1,0 +1,26 @@
+mapper #!/usr/bin/env python
+
+import sys
+
+# Read input from standard input
+for line in sys.stdin:
+    # Remove leading and trailing whitespace
+    line = line.strip()
+    # Split the line into numbers
+    numbers = line.split(',')
+    # Emit each number with its square
+    for number in numbers:
+        number = int(number)  # Convert string to integer
+        square = number * number
+        print(f"{number}\t{square}") reducer #!/usr/bin/env python
+
+import sys
+
+# Read input from standard input
+for line in sys.stdin:
+    # Remove leading and trailing whitespace
+    line = line.strip()
+    # Split the line into number and its square
+    number, square = map(int, line.split('\t'))
+    # Print the number and its square
+    print(f"Number: {number}, Square: {square}")
